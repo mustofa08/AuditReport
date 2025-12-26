@@ -65,7 +65,7 @@ export default function AuditReportList() {
   }
 
   function openQr(id) {
-    setQrValue(`${window.location.origin}/audit/${id}`);
+    setQrValue(`${window.location.origin}/api/VerifikasiLai?code=${id}`);
     setQrOpen(true);
   }
 
@@ -229,7 +229,9 @@ export default function AuditReportList() {
                   <td className="px-4 py-3">
                     <div className="flex justify-center gap-3">
                       <button
-                        onClick={() => navigate(`/audit/${row.id}`)}
+                        onClick={() =>
+                          navigate(`/api/VerifikasiLai?code=${row.id}`)
+                        }
                         className="text-blue-700 hover:underline"
                       >
                         Lihat

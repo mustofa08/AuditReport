@@ -32,6 +32,7 @@ export default function UploadAuditReport() {
     total_aset: "",
     laba_bersih: "",
     is_unverifiable: false,
+    manual_created_at: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -75,6 +76,9 @@ export default function UploadAuditReport() {
       total_aset: String(data.total_aset),
       laba_bersih: String(data.laba_bersih),
       is_unverifiable: data.is_unverifiable ?? false,
+      manual_created_at: data.manual_created_at
+        ? data.manual_created_at.slice(0, 16)
+        : "",
     });
 
     setLoadingData(false);
@@ -116,6 +120,7 @@ export default function UploadAuditReport() {
       total_aset: Number(form.total_aset),
       laba_bersih: Number(form.laba_bersih),
       is_unverifiable: form.is_unverifiable,
+      manual_created_at: form.manual_created_at || null, // ✅
     };
 
     if (isEdit) {
@@ -296,6 +301,24 @@ export default function UploadAuditReport() {
               }
               className="w-full border px-3 py-2 text-sm rounded"
             />
+
+            <div className="mt-4">
+              <label className="block text-sm font-semibold mb-1">
+                Tanggal & Waktu Dibuat (Opsional)
+              </label>
+
+              <input
+                type="datetime-local"
+                name="manual_created_at"
+                value={form.manual_created_at}
+                onChange={handleChange}
+                className="w-full border px-3 py-2 text-sm rounded"
+              />
+
+              <p className="text-xs text-gray-500 mt-1">
+                Jika dikosongkan, sistem akan menggunakan waktu otomatis
+              </p>
+            </div>
 
             {/* ================= CHECKBOX FLAG ================= */}
             <div className="flex items-center gap-2 mt-4">

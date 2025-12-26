@@ -12,9 +12,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landipage />} />
 
-        <Route path="/upload" element={<UploadAuditReport />} />
-        <Route path="/audit/:id" element={<AuditReport />} />
+        <Route path="/api/VerifikasiLai" element={<AuditReport />} />
 
+        <Route path="/upload" element={<UploadAuditReport />} />
         <Route path="/database" element={<AuditReportList />} />
         <Route
           path="/database/audit-reports/:id/edit"

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function AuditReport() {
-  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("code");
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,12 @@ export default function AuditReport() {
   }, []);
 
   async function loadReport() {
+    if (!id) {
+      setError("Kode verifikasi tidak valid");
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("audit_reports")
       .select("*")
@@ -30,36 +37,66 @@ export default function AuditReport() {
   if (loading) return <p className="text-center mt-10">Memuat data…</p>;
   if (error) return <p className="text-center mt-10 text-red-600">{error}</p>;
 
-  const createdAt = new Date(data.created_at).toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  const createdAt = formatCreatedAtEN(
+    data.manual_created_at || data.created_at
+  );
 
   const isFlagged = data.is_unverifiable === true;
 
   return (
     /* ================= PAGE BACKGROUND ================= */
-    <div className="min-h-screen bg-gray-300 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-6">
+    <div
+      className="
+        min-h-screen
+        bg-gray-300
+        flex
+        justify-center
+        px-2 sm:px-6 lg:px-6
+        pt-4 pb-6
+        audit-report
+      "
+    >
       {/* ================= PAPER ================= */}
-      <div className="bg-white text-black border shadow-2xl w-full max-w-[1400px] px-4 sm:px-8 lg:px-10 py-6">
+      <div
+        className="
+          bg-white
+          text-black
+          shadow-xl
+          w-full
+          max-w-[1400px]
+          px-6 sm:px-8 lg:px-10
+          pt-4 pb-4 lg:pt-8 lg:pb-2
+          rounded-md
+        "
+      >
         {/* ================= HEADER ================= */}
-        <div className="text-center leading-snug mb-5">
-          <h1 className="text-[16px] sm:text-[18px] lg:text-[20px] font-bold uppercase">
+        <div className="text-center leading-tight mb-3">
+          <h1 className="text-[20px] font-bold uppercase">
             Kementerian Keuangan Republik Indonesia
           </h1>
-          <h2 className="text-[16px] sm:text-[18px] lg:text-[20px] font-bold uppercase">
+          <h1 className="text-[20px] font-bold uppercase">
             Direktorat Jenderal Stabilitas dan Pengembangan Sektor Keuangan
-          </h2>
-          <h3 className="text-[16px] sm:text-[18px] lg:text-[20px] font-bold uppercase">
-            Direktorat Pembinaan dan Pengawasan Profesi Keuangan
-          </h3>
+          </h1>
+          <h1 className="text-[20px] font-bold uppercase">
+            Direktor Pembinaan dan Pengawasan Profesi Keuangan
+          </h1>
 
-          <hr className="border-t-3 border-gray-500 my-4" />
+          <hr className="border-t-3 border-gray-400 w-full -mx-1 sm:-mx-2 lg:-mx-2 mt-3 mb-5" />
         </div>
 
         {/* ================= OPENING ================= */}
-        <p className="text-sm sm:text-[16px] leading-6 mb-4 pl-0 sm:pl-3 text-justify">
+        <p
+          className="
+            text-[16px]       /* desktop: tetap 16px */
+            leading-5            /* mobile: rapat */
+            sm:leading-6         /* desktop: normal */
+            mb-2
+            pl-0
+            sm:pl-3
+            text-left            /* mobile: kiri */
+            sm:text-justify      /* desktop: justify */
+          "
+        >
           Laporan Auditor Independen <b className="italic">telah terdaftar</b>{" "}
           pada aplikasi Pelita di Direktorat Pembinaan dan Pengawasan Profesi
           Keuangan dengan informasi sebagai berikut:
@@ -67,7 +104,7 @@ export default function AuditReport() {
 
         {/* ================= CONTENT ================= */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm sm:text-[16px] leading-7 mb-4">
+          <table className="w-full text-[16px] leading-7 lg:leading-8 mb-4">
             <tbody>
               <Row label="A. Nama KAP" value={data.nama_kap} />
               <Row label="B. Nama Klien" value={data.nama_klien} />
@@ -116,25 +153,52 @@ export default function AuditReport() {
         )}
 
         {/* ================= DISCLAIMER ================= */}
-        <p className="italic text-sm sm:text-[16px] leading-6 mb-5 pl-0 sm:pl-3 text-justify">
+        <p
+          className="
+            italic
+            text-[16px]       /* desktop: tetap */
+            leading-5
+            sm:leading-6
+            mb-4
+            px-2                 /* mobile: ada jarak kiri-kanan */
+            sm:px-0
+            text-justify         /* mobile*/
+            sm:text-justify      /* desktop*/
+          "
+        >
           “Disclaimer: Semua informasi dalam QR Code dibuat oleh KAP yang
           bersangkutan. DPPPK tidak bertanggung jawab atas kesalahan informasi
           yang disampaikan KAP.”
         </p>
 
-        <hr className="border-t-3 border-gray-500 mb-4" />
+        <hr className="border-t-3 border-gray-400 w-full -mx-1 sm:-mx-2 lg:-mx-2 mt-3 mb-1" />
 
         {/* ================= FOOTER ================= */}
-        <div className="text-center text-sm sm:text-[16px] leading-6">
-          <p className="font-bold">
-            Untuk informasi lebih lanjut silakan hubungi (021) 3505112 atau
-            email ke{" "}
-            <span className="text-blue-700 underline font-bold">
+        <div className="text-center text-[16px] leading-6">
+          <p
+            className="
+              font-bold
+              text-[16px]       /* desktop normal */
+              mb-2
+              text-center          /* mobile: tengah */
+              sm:text-center       /* desktop: tetap rapi */
+              leading-5
+            "
+          >
+            Untuk informasi lebih lanjut silakan hubungi
+            <br className="sm:hidden" />
+            <span className="block sm:inline">
+              (021) 3505112 atau email ke{" "}
+            </span>{" "}
+            <a
+              href="mailto:kemenkeu.prime@kemenkeu.go.id"
+              className="text-blue-700 underline font-bold"
+            >
               kemenkeu.prime@kemenkeu.go.id
-            </span>
+            </a>
           </p>
 
-          <p className="mt-1 text-gray-600 text-[10px]">
+          <p className="mt-1 font-bold text-[10px]">
             dibuat oleh sistem pada {createdAt}
           </p>
         </div>
@@ -166,13 +230,14 @@ function Row({ label, value }) {
       {/* LABEL */}
       <td
         className="
-        block
-        sm:table-cell
-        w-full
-        sm:w-[16%]
-        font-semibold
-        pr-3
-      "
+          block
+          sm:table-cell
+          w-full
+          sm:w-[10%]
+          font-bold
+          sm:font-normal
+          pr-3
+        "
       >
         {label}
       </td>
@@ -180,17 +245,38 @@ function Row({ label, value }) {
       {/* VALUE */}
       <td
         className="
-        block
-        sm:table-cell
-        w-full
-        sm:w-[84%]
-        pl-0
-        sm:pl-0
-      "
+          block
+          sm:table-cell
+          w-full
+          sm:w-[60%]
+          pl-4          
+          sm:pl-0       
+        "
       >
         <span className="hidden sm:inline">: </span>
         {value || "-"}
       </td>
     </tr>
   );
+}
+
+function formatCreatedAtEN(dateString) {
+  if (!dateString) return "-";
+
+  const d = new Date(dateString);
+
+  const tanggal = d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  const jam = d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+
+  return `day ${tanggal} at ${jam}`;
 }

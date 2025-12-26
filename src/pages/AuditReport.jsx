@@ -61,13 +61,14 @@ export default function AuditReport() {
         className="
           bg-white
           text-black
-          shadow-xl
+          shadow-md
           w-full
-          max-w-[1400px]
-          min-h-[85vh]
-          px-6 sm:px-8 lg:px-10
-          pt-6 pb-8
-          rounded-md
+          max-w-[900px]      
+          lg:max-w-[1400px]
+          mx-auto
+          px-6
+          pt-6 pb-6
+          rounded-sm
         "
       >
         {/* ================= HEADER ================= */}

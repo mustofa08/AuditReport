@@ -51,8 +51,8 @@ export default function AuditReport() {
         bg-gray-300
         flex
         justify-center
-        px-2 sm:px-6 lg:px-6
-        pt-4 pb-6
+        px-2 sm:px-6
+        pt-6 pb-10
         audit-report
       "
     >
@@ -64,8 +64,9 @@ export default function AuditReport() {
           shadow-xl
           w-full
           max-w-[1400px]
+          min-h-[85vh]
           px-6 sm:px-8 lg:px-10
-          pt-4 pb-4 lg:pt-8 lg:pb-2
+          pt-6 pb-8
           rounded-md
         "
       >

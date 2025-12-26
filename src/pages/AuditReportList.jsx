@@ -161,7 +161,7 @@ export default function AuditReportList() {
 
             <div className="grid grid-cols-2 gap-2 text-sm">
               <button
-                onClick={() => navigate(`/audit/${row.id}`)}
+                onClick={() => navigate(`/api/VerifikasiLai?code=${row.id}`)}
                 className="py-2 rounded bg-blue-50 text-blue-700 font-medium"
               >
                 Lihat

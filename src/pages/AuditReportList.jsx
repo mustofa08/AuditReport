@@ -147,8 +147,9 @@ export default function AuditReportList() {
 
             <div className="text-xs text-gray-600 space-y-1 mb-3">
               <p>
-                <b>Periode:</b> {row.periode}
+                <b>Periode:</b> {formatPeriodeDisplay(row.periode)}
               </p>
+
               <p>
                 <b>No. LAI:</b> {row.no_lai}
               </p>
@@ -167,7 +168,9 @@ export default function AuditReportList() {
               </button>
 
               <button
-                onClick={() => navigate(`/admin/audit-reports/${row.id}/edit`)}
+                onClick={() =>
+                  navigate(`/database/audit-reports/${row.id}/edit`)
+                }
                 className="py-2 rounded bg-amber-50 text-amber-700 font-medium"
               >
                 Edit
@@ -215,9 +218,10 @@ export default function AuditReportList() {
                   <td className="px-4 py-3">{row.nama_kap}</td>
                   <td className="px-4 py-3">
                     <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs">
-                      {row.periode}
+                      {formatPeriodeDisplay(row.periode)}
                     </span>
                   </td>
+
                   <td className="px-4 py-3 text-xs">{row.no_lai}</td>
                   <td className="px-4 py-3">
                     {new Date(row.created_at).toLocaleDateString("id-ID")}
@@ -232,7 +236,7 @@ export default function AuditReportList() {
                       </button>
                       <button
                         onClick={() =>
-                          navigate(`/admin/audit-reports/${row.id}/edit`)
+                          navigate(`/database/audit-reports/${row.id}/edit`)
                         }
                         className="text-amber-600 hover:underline"
                       >
@@ -294,4 +298,21 @@ export default function AuditReportList() {
       )}
     </div>
   );
+
+  //HELPER
+  function formatPeriodeDisplay(periode) {
+    if (!periode) return "-";
+
+    const [awal, akhir] = periode.split(" s.d. ");
+    if (!awal || !akhir) return periode;
+
+    const fmt = (d) =>
+      new Date(d).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+
+    return `${fmt(awal)} s.d. ${fmt(akhir)}`;
+  }
 }

@@ -120,7 +120,7 @@ export default function UploadAuditReport() {
 
     if (isEdit) {
       await supabase.from("audit_reports").update(payload).eq("id", id);
-      navigate("/admin");
+      navigate("/database");
     } else {
       const { data } = await supabase
         .from("audit_reports")
@@ -152,7 +152,7 @@ export default function UploadAuditReport() {
           </div>
 
           <button
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/database")}
             className="
               inline-flex items-center gap-2
               px-4 py-2

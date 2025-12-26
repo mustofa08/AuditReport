@@ -162,7 +162,7 @@ export default function AuditReport() {
             mb-4
             px-2                 /* mobile: ada jarak kiri-kanan */
             sm:px-0
-            text-justify         /* mobile*/
+            text-left         /* mobile*/
             sm:text-justify      /* desktop*/
           "
         >

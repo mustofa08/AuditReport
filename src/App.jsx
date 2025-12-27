@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-import Landipage from "./pages/Landipage";
+import Landipage from "./pages/LandingPage";
 
 import AuditReportList from "./pages/AuditReportList";
 import AuditReport from "./pages/AuditReport";

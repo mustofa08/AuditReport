@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Landipage from "./pages/Landipage";
 
@@ -10,9 +10,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landipage />} />
-
       <Route path="/api/VerifikasiLai" element={<AuditReport />} />
-
       <Route path="/upload" element={<UploadAuditReport />} />
       <Route path="/database" element={<AuditReportList />} />
       <Route

@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
-import { Helmet } from "react-helmet-async";
-
 export default function AuditReport() {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("code");
@@ -13,9 +11,9 @@ export default function AuditReport() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    loadReport();
-    // eslint-disable-next-line
-  }, []);
+    document.title = "Verifikasi LAI";
+    if (id) loadReport();
+  }, [id]);
 
   async function loadReport() {
     if (!id) {
@@ -47,9 +45,6 @@ export default function AuditReport() {
 
   return (
     <>
-      <Helmet>
-        <title>Verifikasi LAI </title>
-      </Helmet>
       {/* ================= PAGE BACKGROUND ================= */}
       <div
         className="

@@ -8,3 +8,9 @@
 .audit-report {
   font-family: "Roboto";
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+

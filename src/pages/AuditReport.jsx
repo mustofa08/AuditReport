@@ -10,10 +10,16 @@ export default function AuditReport() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [viewedAt, setViewedAt] = useState(null);
+
   useEffect(() => {
     document.title = "Verifikasi LAI";
     if (id) loadReport();
   }, [id]);
+
+  useEffect(() => {
+    setViewedAt(new Date());
+  }, []);
 
   async function loadReport() {
     if (!id) {
@@ -36,8 +42,6 @@ export default function AuditReport() {
 
   if (loading) return <p className="text-center mt-10">Memuat data…</p>;
   if (error) return <p className="text-center mt-10 text-red-600">{error}</p>;
-
-  const createdAt = formatCreatedAtEN(data.created_at);
 
   const isFlagged = data.is_unverifiable === true;
 
@@ -202,7 +206,7 @@ export default function AuditReport() {
             </p>
 
             <p className="mt-1 font-bold text-[10px]">
-              dibuat oleh sistem pada {createdAt}
+              dibuat oleh sistem pada {formatViewedAt(viewedAt)}
             </p>
           </div>
         </div>
@@ -264,18 +268,16 @@ function Row({ label, value }) {
   );
 }
 
-function formatCreatedAtEN(dateString) {
-  if (!dateString) return "-";
+function formatViewedAt(date) {
+  if (!date) return "-";
 
-  const d = new Date(dateString);
-
-  const tanggal = d.toLocaleDateString("en-GB", {
+  const tanggal = date.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "long",
     year: "numeric",
   });
 
-  const jam = d.toLocaleTimeString("en-GB", {
+  const jam = date.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",

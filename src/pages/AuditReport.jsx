@@ -37,9 +37,7 @@ export default function AuditReport() {
   if (loading) return <p className="text-center mt-10">Memuat data…</p>;
   if (error) return <p className="text-center mt-10 text-red-600">{error}</p>;
 
-  const createdAt = formatCreatedAtEN(
-    data.manual_created_at || data.created_at
-  );
+  const createdAt = formatCreatedAtEN(data.created_at);
 
   const isFlagged = data.is_unverifiable === true;
 
@@ -197,7 +195,7 @@ export default function AuditReport() {
               </span>{" "}
               <a
                 href="mailto:kemenkeu.prime@kemenkeu.go.id"
-                className="text-[#003CE6] underline font-bold"
+                className="text-[#0000EE] underline font-bold"
               >
                 kemenkeu.prime@kemenkeu.go.id
               </a>
@@ -284,5 +282,5 @@ function formatCreatedAtEN(dateString) {
     hour12: false,
   });
 
-  return `day ${tanggal} at ${jam}`;
+  return `hari ${tanggal} jam ${jam}`;
 }

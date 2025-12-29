@@ -9,7 +9,7 @@ function formatRupiah(value) {
   return "IDR " + Number(value).toLocaleString("id-ID");
 }
 
-function parseRupiah(value) {
+function parseRupiah(value = "") {
   return value.replace(/[^\d]/g, "");
 }
 
@@ -32,7 +32,6 @@ export default function UploadAuditReport() {
     total_aset: "",
     laba_bersih: "",
     is_unverifiable: false,
-    manual_created_at: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,6 +39,7 @@ export default function UploadAuditReport() {
   const [error, setError] = useState("");
 
   const noLaiPreview = form.no_lai_parts.filter(Boolean).join("/");
+  const isFormInvalid = !!validateForm(form);
 
   /* ================= LOAD DATA (EDIT MODE) ================= */
 
@@ -52,7 +52,23 @@ export default function UploadAuditReport() {
 
     const { data, error } = await supabase
       .from("audit_reports")
-      .select("*")
+      .select(
+        `
+        nama_kap,
+        nama_klien,
+        periode,
+        no_lai,
+        tgl_lai,
+        ap_penanggungjawab,
+        opini,
+        total_aset,
+        laba_bersih,
+        is_unverifiable,
+        created_at,
+        manual_created_at
+      `
+      )
+
       .eq("id", id)
       .single();
 
@@ -76,9 +92,6 @@ export default function UploadAuditReport() {
       total_aset: String(data.total_aset),
       laba_bersih: String(data.laba_bersih),
       is_unverifiable: data.is_unverifiable ?? false,
-      manual_created_at: data.manual_created_at
-        ? data.manual_created_at.slice(0, 16)
-        : "",
     });
 
     setLoadingData(false);
@@ -103,11 +116,18 @@ export default function UploadAuditReport() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
+    const validationError = validateForm(form);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setLoading(true);
+
     const periode = `${form.periode_awal} s.d. ${form.periode_akhir}`;
-    const no_lai = form.no_lai_parts.join("/");
+    const no_lai = form.no_lai_parts.map((p) => p.trim()).join("/");
 
     const payload = {
       nama_kap: form.nama_kap,
@@ -120,19 +140,20 @@ export default function UploadAuditReport() {
       total_aset: Number(form.total_aset),
       laba_bersih: Number(form.laba_bersih),
       is_unverifiable: form.is_unverifiable,
-      manual_created_at: form.manual_created_at || null, // ✅
     };
 
-    if (isEdit) {
-      await supabase.from("audit_reports").update(payload).eq("id", id);
+    try {
+      const { error } = isEdit
+        ? await supabase.from("audit_reports").update(payload).eq("id", id)
+        : await supabase.from("audit_reports").insert([payload]);
+
+      if (error) throw error;
+
       navigate("/database");
-    } else {
-      const { data } = await supabase
-        .from("audit_reports")
-        .insert([payload])
-        .select()
-        .single();
-      navigate(`/audit/${data.id}`);
+    } catch (err) {
+      setError("Gagal menyimpan data laporan");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -302,24 +323,6 @@ export default function UploadAuditReport() {
               className="w-full border px-3 py-2 text-sm rounded"
             />
 
-            <div className="mt-4">
-              <label className="block text-sm font-semibold mb-1">
-                Tanggal & Waktu Dibuat (Opsional)
-              </label>
-
-              <input
-                type="datetime-local"
-                name="manual_created_at"
-                value={form.manual_created_at}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 text-sm rounded"
-              />
-
-              <p className="text-xs text-gray-500 mt-1">
-                Jika dikosongkan, sistem akan menggunakan waktu otomatis
-              </p>
-            </div>
-
             {/* ================= CHECKBOX FLAG ================= */}
             <div className="flex items-center gap-2 mt-4">
               <input
@@ -338,14 +341,19 @@ export default function UploadAuditReport() {
             </div>
           </Section>
 
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              ⚠️ {error}
+            </div>
+          )}
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || isFormInvalid}
             className="
               w-full bg-blue-900 text-white py-3 rounded-lg
-              hover:bg-blue-800 transition disabled:opacity-50
+              hover:bg-blue-800 transition
+              disabled:opacity-50 disabled:cursor-not-allowed
             "
           >
             {loading
@@ -400,4 +408,21 @@ function CurrencyInput({ label, name, value, onChange }) {
       />
     </div>
   );
+}
+
+function validateForm(form) {
+  if (!form.nama_kap.trim()) return "Nama KAP wajib diisi";
+  if (!form.nama_klien.trim()) return "Nama Klien wajib diisi";
+  if (!form.periode_awal || !form.periode_akhir)
+    return "Periode audit wajib diisi lengkap";
+  if (!form.tgl_lai) return "Tanggal LAI wajib diisi";
+  if (!form.ap_penanggungjawab.trim()) return "AP Penanggung Jawab wajib diisi";
+  if (!form.opini.trim()) return "Opini audit wajib diisi";
+  if (!form.total_aset) return "Total aset wajib diisi";
+  if (!form.laba_bersih) return "Laba/Rugi bersih wajib diisi";
+
+  const hasEmptyLai = form.no_lai_parts.some((p) => !p.trim());
+  if (hasEmptyLai) return "Semua bagian Nomor LAI wajib diisi";
+
+  return null;
 }

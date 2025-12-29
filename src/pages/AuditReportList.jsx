@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { QRCodeCanvas } from "qrcode.react";
+import { LogOut } from "lucide-react";
 
 export default function AuditReportList() {
   const navigate = useNavigate();
@@ -64,6 +65,14 @@ export default function AuditReportList() {
     setData((prev) => prev.filter((r) => r.id !== id));
   }
 
+  async function handleLogout() {
+    const ok = window.confirm("Yakin ingin logout?");
+    if (!ok) return;
+
+    await supabase.auth.signOut();
+    navigate("/login", { replace: true });
+  }
+
   function openQr(id) {
     setQrValue(`${window.location.origin}/api/VerifikasiLai?code=${id}`);
     setQrOpen(true);
@@ -87,6 +96,7 @@ export default function AuditReportList() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* HEADER */}
+      {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
@@ -97,11 +107,65 @@ export default function AuditReportList() {
           </p>
         </div>
 
+        {/* DESKTOP ACTIONS */}
+        <div className="hidden sm:flex gap-3">
+          <button
+            onClick={() => navigate("/upload")}
+            className="
+        bg-blue-900 text-white
+        px-5 py-2.5
+        rounded-lg shadow
+        hover:bg-blue-800
+        transition text-sm
+      "
+          >
+            + Upload Laporan
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="
+        flex items-center gap-2
+        bg-red-100 text-red-700
+        px-4 py-2.5
+        rounded-lg
+        hover:bg-red-200
+        transition text-sm font-medium
+      "
+          >
+            <LogOut size={16} />
+            Logout
+          </button>
+        </div>
+      </div>
+
+      {/* MOBILE ACTIONS */}
+      <div className="sm:hidden space-y-3 mb-6">
         <button
           onClick={() => navigate("/upload")}
-          className="w-full sm:w-auto bg-blue-900 text-white px-5 py-2.5 rounded-lg shadow hover:bg-blue-800 transition text-sm"
+          className="
+      w-full
+      bg-blue-900 text-white
+      py-3 rounded-lg
+      shadow
+      text-sm font-semibold
+    "
         >
           + Upload Laporan
+        </button>
+
+        <button
+          onClick={handleLogout}
+          className="
+    sm:hidden
+    fixed top-3 right-3
+    p-2 rounded-full
+    bg-red-100 text-red-700
+    hover:bg-red-200
+    z-50
+  "
+        >
+          <LogOut size={18} />
         </button>
       </div>
 

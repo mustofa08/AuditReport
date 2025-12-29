@@ -174,7 +174,7 @@ export default function AuditReport() {
           "
           >
             “Disclaimer: Semua informasi dalam QR Code dibuat oleh KAP yang
-            bersangkutan. DPPPK tidak bertanggung jawab atas kesalahan informasi
+            bersangkutan, DPPPK tidak bertanggung jawab atas kesalahan informasi
             yang disampaikan KAP.”
           </p>
 

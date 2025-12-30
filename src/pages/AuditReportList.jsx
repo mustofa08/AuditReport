@@ -342,7 +342,23 @@ export default function AuditReportList() {
               ref={qrRef}
               className="flex justify-center bg-gray-50 p-4 rounded mb-4"
             >
-              <QRCodeCanvas value={qrValue} size={180} />
+              <QRCodeCanvas
+                c
+                value={qrValue}
+                size={180}
+                level="H"
+                includeMargin
+                fgColor="#1F73B2"
+                bgColor="#FFFFFF"
+                imageSettings={{
+                  src: "/logo-kemenkeu.png",
+                  x: undefined,
+                  y: undefined,
+                  height: 36,
+                  width: 36,
+                  excavate: true,
+                }}
+              />
             </div>
 
             <div className="flex flex-col gap-2">

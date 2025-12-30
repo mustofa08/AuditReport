@@ -64,8 +64,7 @@ export default function UploadAuditReport() {
         total_aset,
         laba_bersih,
         is_unverifiable,
-        created_at,
-        manual_created_at
+        created_at
       `
       )
 

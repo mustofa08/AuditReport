@@ -1,0 +1,15 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # tiap 10 menit
+  workflow_dispatch: # bisa run manual
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST
+        run: |
+          curl -s https://eljiwaaiiissvwdriquq.supabase.co/rest/v1/audit_reports?select=id \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}"
